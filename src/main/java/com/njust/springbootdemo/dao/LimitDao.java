@@ -30,13 +30,13 @@ public class LimitDao {
         String[] Roomname = (String[])listRoomname.toArray(new String[size]);
         String[] Roomnum = (String[])listRoomnum.toArray(new String[size]);
 
-        hBaseService.putData("Factory", factory.getSid(), "change", Roomname, Roomnum);
+        hBaseService.putData("factory", factory.getSid(), "change", Roomname, Roomnum);
         String[] columns = {"Fcatoryname","Stationnum","Roomnum","Station",};
         String[] value = {factory.getFactoryname(), factory.getStationnum(), factory.getRoomnum(), factory.getStation()};
-        hBaseService.putData("Factory", factory.getSid(), "base", columns, value);
+        hBaseService.putData("factory", factory.getSid(), "base", columns, value);
         String[] Stationexplain = {"Stationexplain"};
         String[] StationexplainValue = {factory.getStationexplain()};
-        hBaseService.putData("Factory", factory.getSid(), "change", Stationexplain, StationexplainValue);
+        hBaseService.putData("factory", factory.getSid(), "change", Stationexplain, StationexplainValue);
         return true;
     }
 
@@ -49,6 +49,6 @@ public class LimitDao {
     }
 
     public Map<String, String> getFactoryBySid(String Sid){
-        return hBaseService.getRowData("Factory", Sid);
+        return hBaseService.getRowData("factory", Sid);
     }
 }
