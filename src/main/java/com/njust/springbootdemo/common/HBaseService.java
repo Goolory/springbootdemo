@@ -4,6 +4,7 @@ package com.njust.springbootdemo.common;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.CompareOperator;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
@@ -35,7 +36,55 @@ public class HBaseService {
             log.error("获取HBASE连接失败");
         }
     }
+    /*查询num*/
+    public String[] findnum_according_sid_roomid(String tableName,String sid,String roomid) throws IOException {
 
+        System.out.print("start");
+        boolean flag1=false;
+        boolean flag2=false;
+        Table table = connection.getTable(TableName.valueOf(tableName));
+        Scan scan = new Scan();
+        ResultScanner resultScanner = table.getScanner(scan);
+        int[] temp;
+        for (Result result : resultScanner) {
+            String stationnum=null;
+            String realitynum=null;
+            String roomname=null;
+            Cell[] cells = result.rawCells();
+            for (Cell cell : cells) {
+                if(new String(CellUtil.cloneFamily(cell)).equals("change")&&new String(CellUtil.cloneQualifier(cell)).equals("Sid")&&new String(CellUtil.cloneValue(cell)).equals(sid))
+                    flag1=true;
+                if(new String(CellUtil.cloneFamily(cell)).equals("change")&&new String(CellUtil.cloneQualifier(cell)).equals("Roomid")&&new String(CellUtil.cloneValue(cell)).equals(roomid))
+                    flag2=true;
+                if(new String(CellUtil.cloneFamily(cell)).equals("change")&&new String(CellUtil.cloneQualifier(cell)).equals("Stationnum"))
+                    stationnum=new String(CellUtil.cloneValue(cell));
+                if(new String(CellUtil.cloneFamily(cell)).equals("change")&&new String(CellUtil.cloneQualifier(cell)).equals("Realitynum"))
+                    realitynum=new String(CellUtil.cloneValue(cell));
+                if(new String(CellUtil.cloneFamily(cell)).equals("change")&&new String(CellUtil.cloneQualifier(cell)).equals("Roomname"))
+                    roomname=new String(CellUtil.cloneValue(cell));
+                System.out.println("RowName:" + new String(CellUtil.cloneRow(cell)) + " ");
+                //System.out.println("Timetamp:" + cell.getTimestamp() + " ");
+                //System.out.println("column Family:" + new String(CellUtil.cloneFamily(cell)) + " ");
+                //System.out.println("column Name:" + new String(CellUtil.cloneQualifier(cell)) + " ");
+                //System.out.println("value:" + new String(CellUtil.cloneValue(cell)) + " ");
+            }
+            if(flag1&&flag2)
+            {
+                return (new String[]{stationnum,realitynum,roomname});
+            }
+            else
+            {
+                flag1=false;
+                flag2=false;
+                stationnum=null;
+                realitynum=null;
+                roomname=null;
+            }
+
+        }
+        close(null, null, table);
+        return null;
+    }
     /**
      * 创建表
      * @param tableName 表名
@@ -365,7 +414,7 @@ public class HBaseService {
             log.debug("putData add or update data Success,rowKey:" + rowKey);
             table.close();
         } catch (Exception e) {
-            log.error(MessageFormat.format("为表添加 or 更新数据失败,tableName:{0},rowKey:{1},familyName:{2}"
+            log.error(MessageFormat.format("1为表添加 or 更新数据失败,tableName:{0},rowKey:{1},familyName:{2}"
                     ,tableName,rowKey,familyName),e);
         }
     }
