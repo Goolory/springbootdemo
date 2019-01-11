@@ -33,7 +33,7 @@ public class LimitDao {
         hBaseService.putData("factory", factory.getSid(), "change", Roomname, Roomnum);
         String[] columns = {"Fcatoryname","Stationnum","Roomnum","Station",};
         String[] value = {factory.getFactoryname(), factory.getStationnum(), factory.getRoomnum(), factory.getStation()};
-        hBaseService.putData("factory", factory.getSid(), "base", columns, value);
+        hBaseService.putData("factory", factory.getSid(), "basic", columns, value);
         String[] Stationexplain = {"Stationexplain"};
         String[] StationexplainValue = {factory.getStationexplain()};
         hBaseService.putData("factory", factory.getSid(), "change", Stationexplain, StationexplainValue);
